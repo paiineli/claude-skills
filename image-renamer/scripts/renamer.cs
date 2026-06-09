@@ -1,14 +1,14 @@
 // Exit codes:
-// 0 = sucesso
-// 1 = uso incorreto
-// 2 = pasta inexistente
-// 3 = erro inesperado
+// 0 = success
+// 1 = incorrect usage
+// 2 = folder not found
+// 3 = unexpected error
 
 using System.Runtime.InteropServices;
 
 if (args.Length == 0)
 {
-    Console.Error.WriteLine("Uso: RenameImagesToGuid <PASTA> [--recursive]");
+    Console.Error.WriteLine("Usage: RenameImagesToGuid <FOLDER> [--recursive]");
     return 1;
 }
 
@@ -17,7 +17,7 @@ var recursive = args.Any(a => a.Equals("--recursive", StringComparison.OrdinalIg
 
 if (!Directory.Exists(dir))
 {
-    Console.Error.WriteLine($"Pasta não encontrada {dir}");
+    Console.Error.WriteLine($"Folder not found {dir}");
     return 2;
 }
 
@@ -57,16 +57,16 @@ try
 }
 catch (UnauthorizedAccessException ex)
 {
-    Console.WriteLine($"Sem permissão: {ex.Message}");
+    Console.WriteLine($"Access denied: {ex.Message}");
     return 3;
 }
-catch (IException ex)
+catch (IOException ex)
 {
-    Console.WriteLine($"Erro de I/O: {ex.Message}");
+    Console.WriteLine($"I/O error: {ex.Message}");
     return 3;
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"Erro inesperado: {ex}");
+    Console.WriteLine($"Unexpected error: {ex}");
     return 3;
 }

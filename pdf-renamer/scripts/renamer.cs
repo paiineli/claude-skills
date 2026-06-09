@@ -12,7 +12,7 @@ var path = GetArgValue(args, "--path")
 
 if (!Directory.Exists(path))
 {
-    Console.Error.WriteLine($"Pasta não encontrada: {path}");
+    Console.Error.WriteLine($"Folder not found: {path}");
     return 2;
 }
 
@@ -35,7 +35,7 @@ try
 
         if (File.Exists(newPath))
         {
-            Console.Error.WriteLine($"PULAR: {Path.GetFileName(file)} -> {sanitized}");
+            Console.Error.WriteLine($"SKIP: {Path.GetFileName(file)} -> {sanitized}");
             continue;
         }
 
@@ -49,23 +49,23 @@ try
 }
 catch (UnauthorizedAccessException ex)
 {
-    Console.Error.WriteLine($"Sem permissão: {ex.Message}");
+    Console.Error.WriteLine($"Access denied: {ex.Message}");
     return 3;
 }
 catch (IOException ex)
 {
-    Console.Error.WriteLine($"Erro de I/O: {ex.Message}");
+    Console.Error.WriteLine($"I/O error: {ex.Message}");
     return 3;
 }
 catch (Exception ex)
 {
-    Console.Error.WriteLine($"Erro inesperado: {ex}");
+    Console.Error.WriteLine($"Unexpected error: {ex}");
     return 3;
 }
 
 static string Sanitize(string name)
 {
-    // Normalizar para NFD e remover caracteres combinatórios (acentos)
+    // Normalize to NFD and strip combining characters (accents)
     var normalized = name.Normalize(NormalizationForm.FormD);
     var withoutAccents = new string(
         normalized.Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c)
@@ -73,13 +73,13 @@ static string Sanitize(string name)
                   .ToArray()
     );
 
-    // Substituir espaços e hífens por sublinhados
+    // Replace spaces and hyphens with underscores
     var underscored = Regex.Replace(withoutAccents, @"[\s\-]+", "_");
 
-    // Remover qualquer caractere que não seja alfanumérico ou sublinhado
+    // Remove any character that is not alphanumeric or an underscore
     var clean = Regex.Replace(underscored, @"[^\w]", "");
 
-    // Colapsar vários sublinhados e aparar
+    // Collapse repeated underscores and trim
     var collapsed = Regex.Replace(clean, @"_+", "_").Trim('_');
 
     return collapsed.ToLowerInvariant();
